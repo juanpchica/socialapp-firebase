@@ -3,21 +3,15 @@ const admin = require("firebase-admin");
 
 admin.initializeApp();
 
-// // Create and Deploy Your First Cloud Functions
-// // https://firebase.google.com/docs/functions/write-firebase-functions
-//
+const express = require("express");
+const app = express();
 
-exports.helloWorld = functions.https.onRequest((request, response) => {
-  functions.logger.info("Hello logs!", { structuredData: true });
-  response.send("Hello from Firebase!");
-});
+// exports.helloWorld = functions.https.onRequest((request, response) => {
+//   functions.logger.info("Hello logs!", { structuredData: true });
+//   response.send("Hello from Firebase!");
+// });
 
-//Firebase Function to get all documents for an especific collection name
-exports.getScreams = functions.https.onRequest((req, res) => {
-  if (req.method !== "POST") {
-    return res.status(400).json({ error: "Method not allowed" });
-  }
-
+app.get("/screams", (req, res) => {
   admin
     .firestore()
     .collection("screams")
@@ -34,6 +28,9 @@ exports.getScreams = functions.https.onRequest((req, res) => {
 
 // Add a new scream
 exports.createScreams = functions.https.onRequest((req, res) => {
+  if (req.method !== "POST") {
+    return res.status(400).json({ error: "Method not allowed" });
+  }
   const newScream = {
     body: req.body.body,
     userHandle: req.body.userHandle,
@@ -52,3 +49,6 @@ exports.createScreams = functions.https.onRequest((req, res) => {
       console.error(err);
     });
 });
+
+//Join firebase with express routes
+exports.api = functions.https.onRequest(app);
