@@ -4,13 +4,15 @@ const admin = require("firebase-admin");
 const app = require("express")();
 admin.initializeApp();
 
+require("dotenv").config();
+
 const firebaseConfig = {
-  apiKey: "AIzaSyDsCT6n76Ds1h_NAF_Ye9CwMw7fuccT1oQ",
-  authDomain: "socialape-76629.firebaseapp.com",
-  projectId: "socialape-76629",
-  storageBucket: "socialape-76629.appspot.com",
-  messagingSenderId: "685928091048",
-  appId: "1:685928091048:web:89c4092625b9d3ceed619d",
+  apiKey: process.env.APIKEY,
+  authDomain: process.env.AUTHDOMAIN,
+  projectId: process.env.PROJECTID,
+  storageBucket: process.env.STORAGEBUCKET,
+  messagingSenderId: process.env.MESSAGINGSENDERID,
+  appId: process.env.APPIDA,
 };
 
 const firebase = require("firebase");
@@ -87,7 +89,7 @@ app.post("/signup", (req, res) => {
     })
     .catch((err) => {
       console.error(err);
-      return res.status(500).json();
+      return res.status(500).json({ error: err.code });
     });
 });
 
