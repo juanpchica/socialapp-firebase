@@ -3,8 +3,18 @@ const admin = require("firebase-admin");
 
 admin.initializeApp();
 
-const express = require("express");
-const app = express();
+const app = require("express")();
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDsCT6n76Ds1h_NAF_Ye9CwMw7fuccT1oQ",
+  authDomain: "socialape-76629.firebaseapp.com",
+  projectId: "socialape-76629",
+  storageBucket: "socialape-76629.appspot.com",
+  messagingSenderId: "685928091048",
+  appId: "1:685928091048:web:89c4092625b9d3ceed619d",
+};
+const firebase = require("firebase");
+firebase.initializeApp(firebaseConfig);
 
 // exports.helloWorld = functions.https.onRequest((request, response) => {
 //   functions.logger.info("Hello logs!", { structuredData: true });
