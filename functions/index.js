@@ -15,11 +15,17 @@ app.get("/screams", (req, res) => {
   admin
     .firestore()
     .collection("screams")
+    .orderBy("createdAt", "desc")
     .get()
     .then((data) => {
       let screams = [];
       data.forEach((doc) => {
-        screams.push(doc.data());
+        screams.push({
+          screamId: doc.id,
+          body: doc.data().body,
+          userHandle: doc.data().userHandle,
+          createdAt: doc.data().createdAt,
+        });
       });
       return res.json(screams);
     })
@@ -27,11 +33,11 @@ app.get("/screams", (req, res) => {
 });
 
 // Add a new scream
-app.post("/screams", (req, res) => {
+app.post("/scream", (req, res) => {
   const newScream = {
     body: req.body.body,
     userHandle: req.body.userHandle,
-    createdAdd: admin.firestore.Timestamp.fromDate(new Date()),
+    createdAt: admin.firestore.Timestamp.fromDate(new Date()),
   };
 
   admin
