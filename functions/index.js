@@ -14,6 +14,10 @@ exports.helloWorld = functions.https.onRequest((request, response) => {
 
 //Firebase Function to get all documents for an especific collection name
 exports.getScreams = functions.https.onRequest((req, res) => {
+  if (req.method !== "POST") {
+    return res.status(400).json({ error: "Method not allowed" });
+  }
+
   admin
     .firestore()
     .collection("screams")
@@ -28,6 +32,7 @@ exports.getScreams = functions.https.onRequest((req, res) => {
     .catch((err) => console.error(err));
 });
 
+// Add a new scream
 exports.createScreams = functions.https.onRequest((req, res) => {
   const newScream = {
     body: req.body.body,
