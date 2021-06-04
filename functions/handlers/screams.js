@@ -1,4 +1,4 @@
-const { db } = require("./util/admin");
+const { db } = require("../util/admin");
 
 module.exports.getAllScreams = (_, res) => {
   db.collection("screams")
