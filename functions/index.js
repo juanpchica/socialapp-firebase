@@ -3,27 +3,11 @@ const app = require("express")();
 
 require("dotenv").config();
 
-const firebase = require("firebase");
-firebase.initializeApp(firebaseConfig);
+const { getAllScreams, postOneScream } = require("./handlers/screams");
 
-app.get("/screams", (req, res) => {
-  db.collection("screams")
-    .orderBy("createdAt", "desc")
-    .get()
-    .then((data) => {
-      let screams = [];
-      data.forEach((doc) => {
-        screams.push({
-          screamId: doc.id,
-          body: doc.data().body,
-          userHandle: doc.data().userHandle,
-          createdAt: doc.data().createdAt,
-        });
-      });
-      return res.json(screams);
-    })
-    .catch((err) => console.error(err));
-});
+// Screams routes
+app.get("/screams", getAllScreams);
+app.post("/scream", FBAuth, postOneScream);
 
 const FBAuth = (req, res, next) => {
   let idToken;
@@ -59,28 +43,6 @@ const FBAuth = (req, res, next) => {
       return res.status(403).json(err);
     });
 };
-
-// Add a new scream
-app.post("/scream", FBAuth, (req, res) => {
-  if (req.body.body.trim() === "")
-    return res.status(400).json({ body: "Body must not be empty" });
-
-  const newScream = {
-    body: req.body.body,
-    userHandle: req.user.handle,
-    createdAt: new Date().toISOString(),
-  };
-
-  db.collection("screams")
-    .add(newScream)
-    .then((doc) => {
-      res.json({ message: `document ${doc.id} created successfully` });
-    })
-    .catch((err) => {
-      res.status(500).json({ error: `Something went wrong` });
-      console.error(err);
-    });
-});
 
 const isEmail = (email) => {
   const regEx =
