@@ -81,3 +81,5 @@ exports.login = (req, res) => {
         .json({ general: "Wrong credentials, please try again" });
     });
 };
+
+exports.uploadImage = () => {};
