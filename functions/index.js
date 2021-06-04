@@ -3,15 +3,6 @@ const app = require("express")();
 
 require("dotenv").config();
 
-const firebaseConfig = {
-  apiKey: process.env.APIKEY,
-  authDomain: process.env.AUTHDOMAIN,
-  projectId: process.env.PROJECTID,
-  storageBucket: process.env.STORAGEBUCKET,
-  messagingSenderId: process.env.MESSAGINGSENDERID,
-  appId: process.env.APPIDA,
-};
-
 const firebase = require("firebase");
 firebase.initializeApp(firebaseConfig);
 
