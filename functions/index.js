@@ -14,7 +14,7 @@ app.post("/scream", FBAuth, postOneScream);
 //Users Routes
 app.post("/signup", signup);
 app.post("/login", login);
-app.post("/uploadImage", FBAuth, uploadImage);
+app.post("/user/image", FBAuth, uploadImage);
 
 //Join firebase with express routes
 exports.api = functions.https.onRequest(app);
