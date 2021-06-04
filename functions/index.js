@@ -1,8 +1,5 @@
 const functions = require("firebase-functions");
-const admin = require("firebase-admin");
-
 const app = require("express")();
-admin.initializeApp();
 
 require("dotenv").config();
 
@@ -17,13 +14,6 @@ const firebaseConfig = {
 
 const firebase = require("firebase");
 firebase.initializeApp(firebaseConfig);
-
-const db = admin.firestore();
-
-// exports.helloWorld = functions.https.onRequest((request, response) => {
-//   functions.logger.info("Hello logs!", { structuredData: true });
-//   response.send("Hello from Firebase!");
-// });
 
 app.get("/screams", (req, res) => {
   db.collection("screams")
