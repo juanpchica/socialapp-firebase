@@ -1,5 +1,5 @@
 const functions = require("firebase-functions");
-const { db } = require("../../merng-server/models/Post");
+const { db } = require("./util/admin");
 const app = require("express")();
 
 require("dotenv").config();
