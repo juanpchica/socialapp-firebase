@@ -7,6 +7,7 @@ const {
   getAllScreams,
   postOneScream,
   getScream,
+  commentOnScream,
 } = require("./handlers/screams");
 const {
   login,
@@ -24,7 +25,7 @@ app.get("/scream/:screamId", getScream);
 // TODO: delete scream
 // TODO: like scream
 // TODO: unlike scream
-// TODO: comment scream
+app.post("/scream/:screamId/comment", FBAuth, commentOnScream);
 
 //Users Routes
 app.post("/signup", signup);
