@@ -1,4 +1,5 @@
 const functions = require("firebase-functions");
+const { db } = require("../../merng-server/models/Post");
 const app = require("express")();
 
 require("dotenv").config();
@@ -39,3 +40,30 @@ app.get("/user", FBAuth, getAuthenticatedUser);
 
 //Join firebase with express routes
 exports.api = functions.https.onRequest(app);
+
+exports.createNotificationOnLike = functions.firestore
+  .document("likes/{id}")
+  .onCreate(async (snapshot) => {
+    try {
+      //Once a get the new snapshot or liked created, get the scream liked
+      const screamDoc = await db
+        .doc(`/screams/${snapshot.data().screamId}`)
+        .get();
+      if (screamDoc.exists) {
+        //Create a notification in the db
+        await db.doc(`/notification/${snapshot.id}`).set({
+          createdAt: new Date().toISOString(),
+          recipient: screamDoc.data().userHandle,
+          sender: snapshot.data().userHandle,
+          type: "like",
+          read: false,
+          screamId: screamDoc.id,
+        });
+
+        return;
+      }
+    } catch (error) {
+      console.error(error);
+      return;
+    }
+  });
