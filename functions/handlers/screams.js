@@ -207,25 +207,68 @@ exports.unlikeScream = (req, res) => {
 };
 
 // Delete a scream
-exports.deleteScream = (req, res) => {
-  const document = db.doc(`/screams/${req.params.screamId}`);
-  document
-    .get()
-    .then((doc) => {
-      if (!doc.exists) {
-        return res.status(404).json({ error: "Scream not found" });
-      }
-      if (doc.data().userHandle !== req.user.handle) {
-        return res.status(403).json({ error: "Unauthorized" });
-      } else {
-        return document.delete();
-      }
-    })
-    .then(() => {
-      res.json({ message: "Scream deleted successfully" });
-    })
-    .catch((err) => {
-      console.error(err);
-      return res.status(500).json({ error: err.code });
-    });
+// exports.deleteScream = (req, res) => {
+//   const document = db.doc(`/screams/${req.params.screamId}`);
+//   document
+//     .get()
+//     .then((doc) => {
+//       if (!doc.exists) {
+//         return res.status(404).json({ error: "Scream not found" });
+//       }
+//       if (doc.data().userHandle !== req.user.handle) {
+//         return res.status(403).json({ error: "Unauthorized" });
+//       } else {
+//         return document.delete();
+//       }
+//     })
+//     .then(() => {
+//       res.json({ message: "Scream deleted successfully" });
+//     })
+//     .catch((err) => {
+//       console.error(err);
+//       return res.status(500).json({ error: err.code });
+//     });
+// };
+
+exports.deleteScream = async (req, res) => {
+  try {
+    const screamDoc = await db.doc(`/screams/${req.params.screamId}`).get();
+
+    //Validate if scream Exists
+    if (!screamDoc.exists) {
+      return res.status(404).json({ message: "Scream not found" });
+    }
+    if (screamDoc.data().userHandle !== req.user.handle) {
+      return res.status(403).json({ error: "Unauthorized" });
+    } else {
+      //Delete the scream from firestore
+      await screamDoc.ref.delete();
+
+      //Find comments and likes for that scream
+      const commentsDoc = await db
+        .collection("comments")
+        .where("screamId", "==", req.params.screamId)
+        .get();
+
+      const likesDoc = await db
+        .collection("likes")
+        .where("screamId", "==", req.params.screamId)
+        .get();
+
+      //Foreach in all comments and delete them
+      commentsDoc.forEach((doc) => {
+        doc.ref.delete();
+      });
+
+      //Foreach in all likes and delete them
+      likesDoc.forEach((doc) => {
+        doc.ref.delete();
+      });
+
+      return res.json({ message: "Scream deleted successfully" });
+    }
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: err.code });
+  }
 };
