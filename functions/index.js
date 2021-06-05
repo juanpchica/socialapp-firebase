@@ -4,7 +4,12 @@ const app = require("express")();
 require("dotenv").config();
 
 const { getAllScreams, postOneScream } = require("./handlers/screams");
-const { login, signup, uploadImage } = require("./handlers/users");
+const {
+  login,
+  signup,
+  uploadImage,
+  addUserDetails,
+} = require("./handlers/users");
 const { FBAuth } = require("./util/fbAuth");
 
 // Screams routes
@@ -15,6 +20,7 @@ app.post("/scream", FBAuth, postOneScream);
 app.post("/signup", signup);
 app.post("/login", login);
 app.post("/user/image", FBAuth, uploadImage);
+app.post("/user", FBAuth, addUserDetails);
 
 //Join firebase with express routes
 exports.api = functions.https.onRequest(app);

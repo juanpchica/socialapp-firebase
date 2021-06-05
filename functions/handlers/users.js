@@ -82,6 +82,10 @@ exports.login = (req, res) => {
     });
 };
 
+exports.addUserDetails = (req, res) => {
+  //Reduce user details
+};
+
 exports.uploadImage = (req, res) => {
   const Busboy = require("busboy");
 
