@@ -51,7 +51,7 @@ exports.createNotificationOnLike = functions.firestore
         .get();
       if (screamDoc.exists) {
         //Create a notification in the db
-        await db.doc(`/notification/${snapshot.id}`).set({
+        await db.doc(`/notifications/${snapshot.id}`).set({
           createdAt: new Date().toISOString(),
           recipient: screamDoc.data().userHandle,
           sender: snapshot.data().userHandle,
@@ -66,4 +66,16 @@ exports.createNotificationOnLike = functions.firestore
       console.error(error);
       return;
     }
+  });
+
+exports.deleteNotificationOnUnLike = functions.firestore
+  .document("likes/{id}")
+  .onDelete((snapshot) => {
+    return db
+      .doc(`/notifications/${snapshot.id}`)
+      .delete()
+      .catch((err) => {
+        console.error(err);
+        return;
+      });
   });
