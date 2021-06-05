@@ -93,15 +93,15 @@ exports.commentOnScream = (req, res) => {
     userImage: req.user.imageUrl,
   };
 
-  console.log(newComment);
-
   db.doc(`/screams/${req.params.screamId}`)
     .get()
     .then((doc) => {
       if (!doc.exists) {
         return res.status(404).json({ error: "Scream not found" });
       }
-
+      return doc.ref.update({ commentCount: doc.data().commentCount + 1 });
+    })
+    .then(() => {
       return db.collection("comments").add(newComment);
     })
     .then(() => {
