@@ -40,22 +40,29 @@ exports.postOneScream = (req, res) => {
     });
 };
 
+//Get one scream
 exports.getScream = (req, res) => {
   let screamData = {};
   db.doc(`/screams/${req.params.screamId}`)
     .get()
     .then((doc) => {
+      //Validate if doc exist
       if (!doc.exists) {
         return res.status(400).json({ error: "Scream not found" });
       }
+
       screamData = doc.data();
       screamData.screamId = doc.id;
+
+      //Returning promise with comments
       return db
         .collection("comments")
+        .orderBy("createdAt", "desc")
         .where("screamId", "==", req.params.screamId)
         .get();
     })
     .then((data) => {
+      //Get comments related to this scream
       screamData.comments = [];
       data.forEach((doc) => {
         screamData.comments.push(doc.data());
