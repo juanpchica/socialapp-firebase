@@ -110,6 +110,7 @@ exports.createNotificationOnComment = functions.firestore
       });
   });
 
+//When user change image, change imageUrl where it is getting used
 exports.onUserImageChange = functions.firestore
   .document("/users/{userId}")
   .onUpdate((change) => {
