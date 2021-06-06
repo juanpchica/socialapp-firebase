@@ -66,12 +66,9 @@ exports.createNotificationOnLike = functions.firestore
           read: false,
           screamId: screamDoc.id,
         });
-
-        return;
       }
     } catch (error) {
       console.error(error);
-      return;
     }
   });
 
@@ -83,7 +80,6 @@ exports.deleteNotificationOnUnLike = functions.firestore
       .delete()
       .catch((err) => {
         console.error(err);
-        return;
       });
   });
 
@@ -112,4 +108,26 @@ exports.createNotificationOnComment = functions.firestore
         console.error(err);
         return;
       });
+  });
+
+exports.onUserImageChange = functions.firestore
+  .document("/users/{userId}")
+  .onUpdate((change) => {
+    console.log(change.before.data());
+    console.log(change.after.data());
+    if (change.before.data().imageUrl !== change.after.data().imageUrl) {
+      console.log("image has changed");
+      const batch = db.batch();
+      return db
+        .collection("screams")
+        .where("userHandle", "==", change.before.data().handle)
+        .get()
+        .then((data) => {
+          data.forEach((doc) => {
+            const scream = db.doc(`/screams/${doc.id}`);
+            batch.update(scream, { userImage: change.after.data().imageUrl });
+          });
+          return batch.commit();
+        });
+    } else return true;
   });
