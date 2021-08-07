@@ -20,6 +20,7 @@ exports.signup = (req, res) => {
   const { valid, errors } = validateSignupData(newUser);
   if (!valid) return res.status(400).json(errors);
 
+  const noImg = "no-img.png";
   //Create doc with user
   let token, userId;
   db.doc(`/users/${newUser.handle}`)
@@ -43,6 +44,7 @@ exports.signup = (req, res) => {
               email: newUser.email,
               createdAt: new Date().toISOString(),
               userId,
+              imageUrl: `https://firebasestorage.googleapis.com/v0/b/${config.storageBucket}/o/${noImg}?alt=media`,
             };
             return db.doc(`/users/${newUser.handle}`).set(userCredentials);
           })
